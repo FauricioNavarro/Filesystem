@@ -129,6 +129,10 @@ public class file implements TreeModel {
     public void removeTreeModelListener(TreeModelListener tl) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    public String getFullName() {
+        return this.name + this.type;
+    }
     
     
 }

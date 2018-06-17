@@ -45,8 +45,8 @@ public class FS_Tree extends JPanel
         super(new BorderLayout());
 
         //Create the components.        
-        treePanel = new DynamicTree();        
-        
+        treePanel = new DynamicTree();
+
         JButton crtButton = new JButton("CRT");
         crtButton.setActionCommand(CRT_COMMAND);
         crtButton.addActionListener(this);
@@ -66,11 +66,11 @@ public class FS_Tree extends JPanel
         JButton clearButton = new JButton("Clear");
         clearButton.setActionCommand(CLEAR_COMMAND);
         clearButton.addActionListener(this);
-        
+
         JButton modButton = new JButton("MFLE");
         modButton.setActionCommand(MFLE_COMMAND);
         modButton.addActionListener(this);
-        
+
         JButton viewButton = new JButton("VIEW");
         viewButton.setActionCommand(VIEW_COMMAND);
         viewButton.addActionListener(this);
@@ -88,7 +88,7 @@ public class FS_Tree extends JPanel
         panel.add(modButton);
         panel.add(viewButton);
         add(panel, BorderLayout.WEST);
-        
+
         JPanel panel2 = new JPanel(new GridLayout(7, 0));
         JLabel jlVisor = new JLabel("    Contenido del archivo seleccionado:    ");
         jlTitle = new JLabel();
@@ -110,44 +110,56 @@ public class FS_Tree extends JPanel
 
         } else if (FLE_COMMAND.equals(command)) {
             // Remove button clicked
-            
-            String input = JOptionPane.showInputDialog("Nombre y extensión del archivo:");
-            String[] splitted_input = input.split("\\.");
-            if (splitted_input.length == 2) {
-                String file_name = splitted_input[0];
-                String file_extension = splitted_input[1];
 
-                String file_content = JOptionPane.showInputDialog(new JTextArea(), "Contenido del archivo:");
-                if (file_content == null) {
-                    file_content = "";
-                }
+            if (treePanel.dirSelected()) {
+                String input = JOptionPane.showInputDialog("Nombre y extensión del archivo:");
+                
+                // to do: Reescribir para contemplar caso hola.mundo.txt
+                String[] splitted_input = input.split("\\.");
+                if (splitted_input.length == 2) {
+                    String file_name = splitted_input[0];
+                    String file_extension = splitted_input[1];
 
-                file new_root = new file(file_name, file_extension, file_content);
-                if (treePanel.existsFile(new_root))
+                    file new_root = new file(file_name, file_extension, "");
+                    if (treePanel.existsFile(new_root)) {
+                        JOptionPane.showMessageDialog(
+                                this,
+                                "No pueden haber 2 archivos con el mismo nombre.",
+                                "¡Error!",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                    } else {
+                        String file_content = JOptionPane.showInputDialog(new JTextArea(), "Contenido del archivo:");
+                        if (file_content == null) {
+                            file_content = "";
+                        }
+                        
+                        new_root.setConten(file_content);
+                        treePanel.mkdir(new_root);
+                    }
+
+                } else {
                     JOptionPane.showMessageDialog(
-                        this,
-                        "No pueden haber 2 archivos con el mismo nombre.",
-                        "¡Error!",
-                        JOptionPane.ERROR_MESSAGE
-                );
-                else
-                    treePanel.mkdir(new_root);
-            } else {
+                            this,
+                            "Ingrese un nombre y extensión para el archivo.",
+                            "Error en el formato",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
+            } else
                 JOptionPane.showMessageDialog(
-                        this,
-                        "Ingrese un nombre y extensión para el archivo.",
-                        "Error en el formato",
-                        JOptionPane.ERROR_MESSAGE
+                    this,
+                    "Solo se pueden crear archivos en un directorio.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
                 );
-            }
-
         } else if (REM_COMMAND.equals(command)) {
             //Remove button clicked
             treePanel.removeCurrentNode();
         } else if (CLEAR_COMMAND.equals(command)) {
             //Clear button clicked.
             treePanel.clear();
-        } else if(CRT_COMMAND.equals(command)){            
+        } else if (CRT_COMMAND.equals(command)) {
             String name_temp = JOptionPane.showInputDialog("Nombre del directoria raiz.");
             String num_sect = JOptionPane.showInputDialog("Cantidad de sectores");
             String tam_sect = JOptionPane.showInputDialog("Tamaño del sector");
@@ -158,7 +170,7 @@ public class FS_Tree extends JPanel
             if (file_content == null) {
                 file_content = "";
             }
-            
+
             treePanel.modifyCurrentFileNode(file_content);
         } else if (VIEW_COMMAND.equals(command)) {
             String file_content = treePanel.getCurrentFileContent();

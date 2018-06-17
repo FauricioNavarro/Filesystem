@@ -104,7 +104,7 @@ public class DynamicTree extends JPanel {
         // Either there was no selection, or the root was selected.
         toolkit.beep();
     }
-    
+
     /**
      * Modifies current selected file's content
      */
@@ -112,7 +112,7 @@ public class DynamicTree extends JPanel {
         TreePath currentSelection = tree.getSelectionPath();
         if (currentSelection != null) {
             DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) (currentSelection.getLastPathComponent());
-            
+
             file archivo = (file) currentNode.getUserObject();
             archivo.setConten(new_file_content);
         }
@@ -168,7 +168,7 @@ public class DynamicTree extends JPanel {
         TreePath currentSelection = tree.getSelectionPath();
         if (currentSelection != null) {
             DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) (currentSelection.getLastPathComponent());
-            
+
             file archivo = (file) currentNode.getUserObject();
             return archivo.getConten();
         }
@@ -183,17 +183,31 @@ public class DynamicTree extends JPanel {
         TreePath currentSelection = tree.getSelectionPath();
         if (currentSelection != null) {
             DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) (currentSelection.getLastPathComponent());
-            
-            Enumeration children = currentNode.getParent().children();
+
+            Enumeration children = currentNode.children();
             while (children.hasMoreElements()) {
                 DefaultMutableTreeNode tmp_node = (DefaultMutableTreeNode) children.nextElement();
                 file tmp_file = (file) tmp_node.getUserObject();
                 System.out.println(tmp_file.getName());
-                if (tmp_file.getName().equals(new_root.getName()))
+                if (tmp_file.getFullName().equals(new_root.getFullName())) {
                     return true;
+                }
             }
-            
+
             return false;
+        }
+
+        return false;
+    }
+
+    boolean dirSelected() {
+        TreePath currentSelection = tree.getSelectionPath();
+        if (currentSelection != null) {
+            DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) (currentSelection.getLastPathComponent());
+            file file_tmp = (file) currentNode.getUserObject();
+            if (file_tmp.getType().equals("dir") ||
+                    file_tmp.getType().equals("root"))
+                return true;
         }
 
         return false;
