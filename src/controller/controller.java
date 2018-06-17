@@ -5,23 +5,21 @@
  */
 package controller;
 
-import javax.swing.JTree;
-import javax.swing.tree.DefaultMutableTreeNode;
+import java.io.BufferedWriter;
 import model.file;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 /**
  *
  * @author Fauricio
  */
 public class controller {
-    private JTree tree;
-    private DefaultMutableTreeNode root;
     private static controller instance = null;
+    private String line = System.getProperty("line.separator")+"==============================================="+System.getProperty("line.separator");
+    private static String path = "C:\\Users\\Fauricio\\Desktop\\Filesystem\\data\\";
     
-    private controller() {
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Root");
-        root.add(new DefaultMutableTreeNode("dir0"));
-        System.out.printf("Inicio");
-        
+    private controller() {                        
     }
     
     public static controller getInstance() {
@@ -29,28 +27,41 @@ public class controller {
          instance = new controller();
       }
       return instance;
-    }
-
-    public DefaultMutableTreeNode getRoot() {
-        return root;
-    }       
-
-    public JTree getTree() {
-        return tree;
-    }
+    }         
     
-    private static class controllerHolder {
-
-        private static final controller INSTANCE = new controller();
-    }
-    
-    public void create_directory(String name){
-        file new_file = new file(name,"dir","");
-        DefaultMutableTreeNode newDirectory = new DefaultMutableTreeNode(new_file);
-        this.root.add(newDirectory);
-        //this.tree = new JTree(root);
-        String mjs = root.getFirstChild().toString();
-        System.out.print(mjs);
-    }
-    
+    public void file_system(String name,String sectores,String tamaño){
+        BufferedWriter writer = null;        
+        try {
+	     File file = new File(path+name+".txt");	     
+             boolean fvar = file.createNewFile();
+	     if (fvar){
+	          System.out.println("File has been created successfully");                  
+                  writer = new BufferedWriter(new FileWriter(file));                  
+                  writer.write(name);
+                  writer.write(line);
+                  int num_sector = Integer.parseInt(sectores);
+                  int tam = Integer.parseInt(tamaño);
+                  for(int i=0;i<num_sector;i++){
+                      int break_line = 0;
+                      for(int j=0;j<tam;j++){
+                          if(break_line < 50){
+                              writer.write((char)254);
+                              break_line++;
+                          }else{
+                              break_line=0;                              
+                              writer.write(System.getProperty("line.separator"));
+                              writer.write((char)254);
+                          }
+                      }
+                      writer.write(line);                      
+                  }
+                  writer.close();
+	     }else{
+	          System.out.println("File already present at the specified location");
+	     }
+    	} catch (IOException e) {
+    		System.out.println("Exception Occurred:");
+	        e.printStackTrace();
+	}
+    }    
 }
