@@ -19,6 +19,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import controller.controller;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 public class FS_Tree extends JPanel
@@ -45,11 +46,10 @@ public class FS_Tree extends JPanel
         super(new BorderLayout());
 
         //Create the components.        
-        treePanel = new DynamicTree();
-        //populateTree(treePanel);
-
-        name = new JTextField(NAME);
-
+        treePanel = new DynamicTree();        
+        
+        name = new JTextField(NAME);            
+        
         JButton crtButton = new JButton("CRT");
         crtButton.setActionCommand(CRT_COMMAND);
         crtButton.addActionListener(this);
@@ -153,6 +153,10 @@ public class FS_Tree extends JPanel
             treePanel.clear();
         } else if (CRT_COMMAND.equals(command)) {
             String name_aux = name.getText().toString();
+            String name_temp = JOptionPane.showInputDialog("Nombre del directoria raiz.");
+            String num_sect = JOptionPane.showInputDialog("Cantidad de sectores");
+            String tam_sect = JOptionPane.showInputDialog("Tamaño del sector");
+            controller.getInstance().file_system(name_temp, num_sect, tam_sect);
             treePanel.create(name_aux);
         } else if (MFLE_COMMAND.equals(command)) {
             String file_content = JOptionPane.showInputDialog(new JTextArea(), "Nuevo contenido del archivo:");
