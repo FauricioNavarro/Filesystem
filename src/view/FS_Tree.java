@@ -11,102 +11,165 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-public class FS_Tree extends JPanel 
-                             implements ActionListener {
-    private JTextField name; 
+public class FS_Tree extends JPanel
+        implements ActionListener {
+
+    private JTextField name;
+    private JLabel jlTitle;
     private int newNodeSuffix = 1;
-    private static String MKDIR_COMMAND = "MKDIR";
-    private static String REMOVE_COMMAND = "remove";
-    private static String CLEAR_COMMAND = "clear";
     private static String CRT_COMMAND = "CRT";
-    private static String NAME = "name";
     private static String FLE_COMMAND = "FLE";
-    
-    
+    private static String MKDIR_COMMAND = "MKDIR";
+    private static String MFLE_COMMAND = "MFLE";
+    private static String PPT_COMMAND = "PPT";
+    private static String VIEW_COMMAND = "VIEW";
+    private static String COPY_COMMAND = "COPY";
+    private static String MOV_COMMAND = "MOV";
+    private static String REM_COMMAND = "REM";
+    private static String CLEAR_COMMAND = "clear";
+    private static String NAME = "name";
+
     private DynamicTree treePanel;
 
     public FS_Tree() {
         super(new BorderLayout());
-        
+
         //Create the components.        
         treePanel = new DynamicTree();
         //populateTree(treePanel);
-        
-        name = new JTextField(NAME);            
-        
+
+        name = new JTextField(NAME);
+
         JButton crtButton = new JButton("CRT");
         crtButton.setActionCommand(CRT_COMMAND);
         crtButton.addActionListener(this);
-        
+
         JButton addButton = new JButton("MKDIR");
         addButton.setActionCommand(MKDIR_COMMAND);
         addButton.addActionListener(this);
-        
+
         JButton fileButton = new JButton("FLE");
         fileButton.setActionCommand(FLE_COMMAND);
         fileButton.addActionListener(this);
-        
+
         JButton removeButton = new JButton("Remove");
-        removeButton.setActionCommand(REMOVE_COMMAND);
+        removeButton.setActionCommand(REM_COMMAND);
         removeButton.addActionListener(this);
-        
+
         JButton clearButton = new JButton("Clear");
         clearButton.setActionCommand(CLEAR_COMMAND);
         clearButton.addActionListener(this);
+        
+        JButton modButton = new JButton("MFLE");
+        modButton.setActionCommand(MFLE_COMMAND);
+        modButton.addActionListener(this);
+        
+        JButton viewButton = new JButton("VIEW");
+        viewButton.setActionCommand(VIEW_COMMAND);
+        viewButton.addActionListener(this);
 
         //Lay everything out.
         treePanel.setPreferredSize(new Dimension(500, 350));
         add(treePanel, BorderLayout.CENTER);
 
-        JPanel panel = new JPanel(new GridLayout(7,0));
+        JPanel panel = new JPanel(new GridLayout(0, 1));
         panel.add(name);
         panel.add(crtButton);
         panel.add(addButton);
         panel.add(fileButton);
-        panel.add(removeButton); 
+        panel.add(removeButton);
         panel.add(clearButton);
-	add(panel, BorderLayout.EAST);
+        panel.add(modButton);
+        panel.add(viewButton);
+        add(panel, BorderLayout.WEST);
+        
+        JPanel panel2 = new JPanel(new GridLayout(7, 0));
+        JLabel jlVisor = new JLabel("    Contenido del archivo seleccionado:    ");
+        jlTitle = new JLabel();
+        panel2.add(jlVisor);
+        panel2.add(jlTitle);
+        add(panel2, BorderLayout.EAST);
     }
-    
-    
+
+    @Override
     public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
-        
+
         if (MKDIR_COMMAND.equals(command)) {
             //Add button clicked
-            
+
             String name_aux = name.getText().toString();
-            file new_root = new file(name_aux,"dir","");            
+            file new_root = new file(name_aux, "dir", "");
             treePanel.mkdir(new_root);
+
+        } else if (FLE_COMMAND.equals(command)) {
+            // Remove button clicked
             
-        }else if (FLE_COMMAND.equals(command)) {
-            //Remove button clicked            
-            String file_txt = name.getText().toString();
-            file new_root = new file(file_txt,"txt","hola mundo");                                  
-            treePanel.mkdir(new_root);
-        } else if (REMOVE_COMMAND.equals(command)) {
+            String input = JOptionPane.showInputDialog("Nombre y extensión del archivo:");
+            String[] splitted_input = input.split("\\.");
+            if (splitted_input.length == 2) {
+                String file_name = splitted_input[0];
+                String file_extension = splitted_input[1];
+
+                String file_content = JOptionPane.showInputDialog(new JTextArea(), "Contenido del archivo:");
+                if (file_content == null) {
+                    file_content = "";
+                }
+
+                file new_root = new file(file_name, file_extension, file_content);
+                if (treePanel.existsFile(new_root))
+                    JOptionPane.showMessageDialog(
+                        this,
+                        "No pueden haber 2 archivos con el mismo nombre.",
+                        "¡Error!",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                else
+                    treePanel.mkdir(new_root);
+            } else {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Ingrese un nombre y extensión para el archivo.",
+                        "Error en el formato",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+
+        } else if (REM_COMMAND.equals(command)) {
             //Remove button clicked
             treePanel.removeCurrentNode();
         } else if (CLEAR_COMMAND.equals(command)) {
             //Clear button clicked.
             treePanel.clear();
-        } else if(CRT_COMMAND.equals(command)){
+        } else if (CRT_COMMAND.equals(command)) {
             String name_aux = name.getText().toString();
             treePanel.create(name_aux);
+        } else if (MFLE_COMMAND.equals(command)) {
+            String file_content = JOptionPane.showInputDialog(new JTextArea(), "Nuevo contenido del archivo:");
+            if (file_content == null) {
+                file_content = "";
+            }
+            
+            treePanel.modifyCurrentFileNode(file_content);
+        } else if (VIEW_COMMAND.equals(command)) {
+            String file_content = treePanel.getCurrentFileContent();
+            jlTitle.setText(file_content);
         }
     }
 
     /**
-     * Create the GUI and show it.  For thread safety,
-     * this method should be invoked from the
-     * event-dispatching thread.
+     * Create the GUI and show it. For thread safety, this method should be
+     * invoked from the event-dispatching thread.
      */
     private static void createAndShowGUI() {
         //Create and set up the window.
