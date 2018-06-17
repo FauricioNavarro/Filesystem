@@ -1,33 +1,3 @@
-/*
- * Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- *   - Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *
- *   - Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
- *
- *   - Neither the name of Oracle or the names of its
- *     contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
- * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
 
 package view;
 
@@ -38,6 +8,8 @@ package view;
 
 import java.awt.GridLayout;
 import java.awt.Toolkit;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -48,6 +20,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
+import javax.swing.tree.TreeNode;
 import model.file;
 
 public class DynamicTree extends JPanel {
@@ -55,11 +28,11 @@ public class DynamicTree extends JPanel {
     protected DefaultTreeModel treeModel;
     protected JTree tree;
     private Toolkit toolkit = Toolkit.getDefaultToolkit();
-
-    public DynamicTree(String name) {
+    private file root_file;
+    public DynamicTree() {
         super(new GridLayout(1,0));
-        
-        rootNode = new DefaultMutableTreeNode(name);
+        root_file = new file("root","root","");
+        rootNode = new DefaultMutableTreeNode(root_file);
         treeModel = new DefaultTreeModel(rootNode);
 	treeModel.addTreeModelListener(new MyTreeModelListener());
         tree = new JTree(treeModel);
@@ -78,32 +51,45 @@ public class DynamicTree extends JPanel {
         treeModel.reload();
     }
     
-    public void create(String name){        
-        rootNode.setUserObject(name);        
+    public void create(String name){ 
+        root_file = new file(name,"root","");        
+        rootNode.setUserObject(root_file);        
     }
 
     public DefaultMutableTreeNode mkdir(Object child) {
         DefaultMutableTreeNode parentNode = null;
-        file f = (file) child;
-        TreePath parentPath = tree.getSelectionPath();
-        if(f.getType().equals("dir")){
+        file new_file = (file) child;        
+        file file_aux;
+        Object user;
+        TreePath parentPath = tree.getSelectionPath();                        
+        if(new_file.getType().equals("dir") || new_file.getType().equals("root")){
             if (parentPath == null) {
-                parentNode = rootNode;
+                parentNode = rootNode;                                              
             } else {
-                parentNode = (DefaultMutableTreeNode)
-                             (parentPath.getLastPathComponent());
-            }            
+                parentNode = (DefaultMutableTreeNode)(parentPath.getLastPathComponent());                
+            }                                 
+            user = parentNode.getUserObject();                                                
+            file_aux = (file) user;            
+            if(file_aux.getType().equals("dir")||file_aux.getType().equals("root")){
+                return addObject(parentNode, child, true);
+            }
         }else{
             if (parentPath == null) {
-                parentNode = rootNode;
+                parentNode = rootNode;                                              
             } else {
-                parentNode = (DefaultMutableTreeNode)
-                             (parentPath.getLastPathComponent());
+                parentNode = (DefaultMutableTreeNode)(parentPath.getLastPathComponent());                
+            }                          
+            user = parentNode.getUserObject();                                                
+            file_aux = (file) user;  
+            if(file_aux.getType().equals("dir")||file_aux.getType().equals("root")){
+                return addObject(parentNode, child, true);
             }
-            
-        }
-        return addObject(parentNode, child, true);
+        }        
+        return null;
     }
+    
+    
+    
     /** Remove the currently selected node. */
     public void removeCurrentNode() {
         TreePath currentSelection = tree.getSelectionPath();
@@ -131,6 +117,7 @@ public class DynamicTree extends JPanel {
         } else {
             parentNode = (DefaultMutableTreeNode)
                          (parentPath.getLastPathComponent());
+            
         }
 
         return addObject(parentNode, child, true);
