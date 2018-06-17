@@ -96,13 +96,12 @@ public class FS_Tree extends JPanel
         } else if (CLEAR_COMMAND.equals(command)) {
             //Clear button clicked.
             treePanel.clear();
-        } else if(CRT_COMMAND.equals(command)){
-            String name_aux = name.getText().toString();
+        } else if(CRT_COMMAND.equals(command)){            
             String name_temp = JOptionPane.showInputDialog("Nombre del directoria raiz.");
             String num_sect = JOptionPane.showInputDialog("Cantidad de sectores");
             String tam_sect = JOptionPane.showInputDialog("Tamaño del sector");
             controller.getInstance().file_system(name_temp, num_sect, tam_sect);
-            treePanel.create(name_aux);
+            treePanel.create(name_temp);
         }
     }
 
