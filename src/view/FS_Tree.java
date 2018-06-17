@@ -25,7 +25,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 public class FS_Tree extends JPanel
         implements ActionListener {
 
-    private JTextField name;
     private JLabel jlTitle;
     private int newNodeSuffix = 1;
     private static String CRT_COMMAND = "CRT";
@@ -47,8 +46,6 @@ public class FS_Tree extends JPanel
 
         //Create the components.        
         treePanel = new DynamicTree();        
-        
-        name = new JTextField(NAME);            
         
         JButton crtButton = new JButton("CRT");
         crtButton.setActionCommand(CRT_COMMAND);
@@ -83,7 +80,6 @@ public class FS_Tree extends JPanel
         add(treePanel, BorderLayout.CENTER);
 
         JPanel panel = new JPanel(new GridLayout(0, 1));
-        panel.add(name);
         panel.add(crtButton);
         panel.add(addButton);
         panel.add(fileButton);
@@ -108,8 +104,8 @@ public class FS_Tree extends JPanel
         if (MKDIR_COMMAND.equals(command)) {
             //Add button clicked
 
-            String name_aux = name.getText().toString();
-            file new_root = new file(name_aux, "dir", "");
+            String input = JOptionPane.showInputDialog("Nombre del directorio:");
+            file new_root = new file(input, "dir", "");
             treePanel.mkdir(new_root);
 
         } else if (FLE_COMMAND.equals(command)) {
@@ -152,12 +148,11 @@ public class FS_Tree extends JPanel
             //Clear button clicked.
             treePanel.clear();
         } else if (CRT_COMMAND.equals(command)) {
-            String name_aux = name.getText().toString();
             String name_temp = JOptionPane.showInputDialog("Nombre del directoria raiz.");
             String num_sect = JOptionPane.showInputDialog("Cantidad de sectores");
             String tam_sect = JOptionPane.showInputDialog("Tamaño del sector");
             controller.getInstance().file_system(name_temp, num_sect, tam_sect);
-            treePanel.create(name_aux);
+            treePanel.create(name_temp);
         } else if (MFLE_COMMAND.equals(command)) {
             String file_content = JOptionPane.showInputDialog(new JTextArea(), "Nuevo contenido del archivo:");
             if (file_content == null) {
