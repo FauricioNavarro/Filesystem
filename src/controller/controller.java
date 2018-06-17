@@ -16,7 +16,7 @@ import java.io.IOException;
  */
 public class controller {
     private static controller instance = null;
-    private String line = System.getProperty("line.separator")+"==============================================="+System.getProperty("line.separator");
+    private String line = "==============================================="+'\n';
     private static String path = "C:\\Users\\Fauricio\\Desktop\\Filesystem\\data\\";
     
     private controller() {                        

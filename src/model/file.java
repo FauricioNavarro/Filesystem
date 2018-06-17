@@ -14,7 +14,7 @@ import java.util.Date;
 public class file {
     private String name;
     private String type; //Extensión
-    private String conten;
+    private String content;
     private Date create_date;
     private Date update;
     private int size_file;        
@@ -22,7 +22,7 @@ public class file {
     public file(String name, String type, String conten, Date create_date, Date update, int size_file) {
         this.name = name;
         this.type = type;
-        this.conten = conten;
+        this.content = conten;
         this.create_date = create_date;
         this.update = update;
         this.size_file = size_file;
@@ -31,7 +31,7 @@ public class file {
     public file(String name, String type, String conten) {
         this.name = name;
         this.type = type;
-        this.conten = conten;
+        this.content = conten;
     }
 
     public Date getCreate_date() {
@@ -75,17 +75,19 @@ public class file {
     }
 
     public String getConten() {
-        return conten;
+        return content;
     }
 
     public void setConten(String conten) {
-        this.conten = conten;
+        this.content = conten;
     }
 
     @Override
     public String toString() {
-        return "file{" + "name=" + name + ", type=" + type + ", conten=" + conten + '}';
+        return "Name= " + name + ",Extension= " + type + ",create_date= " + create_date + '\n' +"Content= "+content + '\n';
     }
+
+    
     
     
 }

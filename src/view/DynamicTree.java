@@ -70,7 +70,8 @@ public class DynamicTree extends JPanel {
             }                                 
             user = parentNode.getUserObject();                                                
             file_aux = (file) user;            
-            if(file_aux.getType().equals("dir")||file_aux.getType().equals("root")){
+            if((file_aux.getType().equals("dir")||file_aux.getType().equals("root"))
+                    && isNameRepit(parentNode, new_file.getName(),new_file.getType())==false){
                 return addObject(parentNode, child, true);
             }
         }else{
@@ -81,14 +82,58 @@ public class DynamicTree extends JPanel {
             }                          
             user = parentNode.getUserObject();                                                
             file_aux = (file) user;  
-            if(file_aux.getType().equals("dir")||file_aux.getType().equals("root")){
+            if((file_aux.getType().equals("dir")||file_aux.getType().equals("root"))
+                    && isNameRepit(parentNode, new_file.getName(),new_file.getType())==false){
                 return addObject(parentNode, child, true);
             }
         }        
         return null;
     }
     
+    public boolean isNameRepit(DefaultMutableTreeNode parentNode,String name,String ext){
+        boolean band = false;
+        int lim = parentNode.getChildCount();
+        if(lim != 0){
+            for(int i=0;i<lim;i++){
+            DefaultMutableTreeNode temp = (DefaultMutableTreeNode) parentNode.getChildAt(i);
+            Object user = temp.getUserObject();                                                
+            file file_aux = (file) user;
+                if(file_aux.getName().equals(name)&&file_aux.getType().equals(ext)){
+                    band = true;
+                }
+            }
+        }
+        return band;
+    }
     
+    public void printTree(){
+        System.out.println(treeModel.toString());
+        int lim = rootNode.getChildCount();            
+        file file_temp = (file) root_file;
+        System.out.printf(file_temp.toString());
+        System.out.printf("+++++++++++++++++++++++++++++++++++++++"+'\n');
+        for(int i = 0;i<lim;i++){
+            DefaultMutableTreeNode next_node = (DefaultMutableTreeNode) rootNode.getChildAt(i);
+            if(next_node != null){
+                print_aux(next_node);
+            }
+        }                      
+    }
+    
+    public void print_aux(DefaultMutableTreeNode node){
+        if(node != null){
+            int lim = node.getChildCount();
+            Object obj = node.getUserObject();
+            file file_temp = (file) obj;
+            System.out.println(file_temp.toString());
+            System.out.printf("====================================="+'\n');
+            for(int i = 0;i<lim;i++){
+                DefaultMutableTreeNode next_node = (DefaultMutableTreeNode) node.getChildAt(i);                
+                print_aux(next_node);                                
+            }
+        }
+        
+    }
     
     /** Remove the currently selected node. */
     public void removeCurrentNode() {

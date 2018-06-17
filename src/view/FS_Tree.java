@@ -18,11 +18,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import controller.controller;
+import java.util.Date;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 public class FS_Tree extends JPanel 
-                             implements ActionListener {
-    private JTextField name; 
+                             implements ActionListener {    
     private int newNodeSuffix = 1;
     private static String MKDIR_COMMAND = "MKDIR";
     private static String REMOVE_COMMAND = "remove";
@@ -38,9 +38,7 @@ public class FS_Tree extends JPanel
         super(new BorderLayout());
         
         //Create the components.        
-        treePanel = new DynamicTree();        
-        
-        name = new JTextField(NAME);            
+        treePanel = new DynamicTree();                                  
         
         JButton crtButton = new JButton("CRT");
         crtButton.setActionCommand(CRT_COMMAND);
@@ -54,7 +52,7 @@ public class FS_Tree extends JPanel
         fileButton.setActionCommand(FLE_COMMAND);
         fileButton.addActionListener(this);
         
-        JButton removeButton = new JButton("Remove");
+        JButton removeButton = new JButton("REM");
         removeButton.setActionCommand(REMOVE_COMMAND);
         removeButton.addActionListener(this);
         
@@ -66,8 +64,7 @@ public class FS_Tree extends JPanel
         treePanel.setPreferredSize(new Dimension(500, 350));
         add(treePanel, BorderLayout.CENTER);
 
-        JPanel panel = new JPanel(new GridLayout(7,0));
-        panel.add(name);
+        JPanel panel = new JPanel(new GridLayout(7,0));        
         panel.add(crtButton);
         panel.add(addButton);
         panel.add(fileButton);
@@ -81,15 +78,21 @@ public class FS_Tree extends JPanel
         String command = e.getActionCommand();
         
         if (MKDIR_COMMAND.equals(command)) {
-            //Add button clicked            
-            String name_aux = name.getText().toString();
-            file new_root = new file(name_aux,"dir","");            
-            treePanel.mkdir(new_root);            
+            //Add button clicked                                           
+            String name_aux = JOptionPane.showInputDialog("Digite el nombre del directorio.");
+            Date create_date = new Date();
+            file new_root = new file(name_aux,"dir","",create_date,create_date,0);            
+            treePanel.mkdir(new_root);   
+            treePanel.printTree();
         }else if (FLE_COMMAND.equals(command)) {
             //Remove button clicked            
-            String file_txt = name.getText().toString();
-            file new_root = new file(file_txt,"txt","hola mundo");                                  
+            String name_aux = JOptionPane.showInputDialog("Digite el nombre del archivo.");
+            String type = JOptionPane.showInputDialog("Digite la extensión");
+            String content = JOptionPane.showInputDialog("Desea agregarle contenido al archivo");            
+            Date create_date = new Date();
+            file new_root = new file(name_aux,type,content,create_date,create_date,0);                                  
             treePanel.mkdir(new_root);
+            treePanel.printTree();
         } else if (REMOVE_COMMAND.equals(command)) {
             //Remove button clicked
             treePanel.removeCurrentNode();
