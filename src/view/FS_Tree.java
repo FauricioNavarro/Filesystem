@@ -35,9 +35,8 @@ public class FS_Tree extends JPanel
     public FS_Tree() {
         super(new BorderLayout());
         
-        //Create the components.
-        file new_root = new file("root","dir","");
-        treePanel = new DynamicTree(new_root.getName());
+        //Create the components.        
+        treePanel = new DynamicTree();
         //populateTree(treePanel);
         
         name = new JTextField(NAME);            
@@ -75,26 +74,7 @@ public class FS_Tree extends JPanel
         panel.add(clearButton);
 	add(panel, BorderLayout.EAST);
     }
-
-    public void populateTree(DynamicTree treePanel) {
-        /*
-        String p1Name = new String("Parent 1");
-        String p2Name = new String("Parent 2");
-        String c1Name = new String("Child 1");
-        String c2Name = new String("Child 2");
-
-        DefaultMutableTreeNode p1, p2;
-
-        p1 = treePanel.addObject(null, p1Name);
-        p2 = treePanel.addObject(null, p2Name);
-
-        treePanel.addObject(p1, c1Name);
-        treePanel.addObject(p1, c2Name);
-
-        treePanel.addObject(p2, c1Name);
-        treePanel.addObject(p2, c2Name);
-        */
-    }
+    
     
     public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
@@ -108,9 +88,8 @@ public class FS_Tree extends JPanel
             
         }else if (FLE_COMMAND.equals(command)) {
             //Remove button clicked            
-            String name_aux = name.getText().toString();
-            file new_root = new file(name_aux,"txt","");            
-            treePanel.mkdir(new_root);           
+            String file_txt = name.getText().toString();
+            file new_root = new file(file_txt,"txt","hola mundo");                                  
             treePanel.mkdir(new_root);
         } else if (REMOVE_COMMAND.equals(command)) {
             //Remove button clicked
