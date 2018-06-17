@@ -7,6 +7,7 @@ package view;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.util.Enumeration;
+import javax.swing.DropMode;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -35,7 +36,12 @@ public class DynamicTree extends JPanel {
         treeModel.addTreeModelListener(new MyTreeModelListener());
         tree = new JTree(treeModel);
         tree.setEditable(true);
-        tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        
+        tree.setDragEnabled(true);
+        tree.setDropMode(DropMode.ON_OR_INSERT);
+        tree.setTransferHandler(new TreeTransferHandler());
+        
+        tree.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
         tree.setShowsRootHandles(true);
 
         JScrollPane scrollPane = new JScrollPane(tree);
