@@ -29,6 +29,8 @@ public class DynamicTree extends JPanel {
     protected JTree tree;
     private Toolkit toolkit = Toolkit.getDefaultToolkit();
     private file root_file;
+    private String str_tree;
+    
     public DynamicTree() {
         super(new GridLayout(1,0));
         root_file = new file("root","root","");
@@ -106,8 +108,37 @@ public class DynamicTree extends JPanel {
         return band;
     }
     
+    
+    public String tree_toString(){
+        String res = "";        
+        int lim = rootNode.getChildCount();            
+        file file_temp = (file) root_file;
+        res = file_temp.get_all();        
+        for(int i = 0;i<lim;i++){
+            DefaultMutableTreeNode next_node = (DefaultMutableTreeNode) rootNode.getChildAt(i);
+            if(next_node != null){
+                res = res + tree_toString_aux(next_node);
+            }
+        }  
+        return res;
+    }
+    
+    public String tree_toString_aux(DefaultMutableTreeNode node){
+        String res = "";
+        if(node != null){
+            int lim = node.getChildCount();
+            Object obj = node.getUserObject();
+            file file_temp = (file) obj;
+            res = res + file_temp.get_all();            
+            for(int i = 0;i<lim;i++){
+                DefaultMutableTreeNode next_node = (DefaultMutableTreeNode) node.getChildAt(i);                
+                res = res + tree_toString_aux(next_node);                                
+            }
+        }
+        return res;
+    }
+    
     public void printTree(){
-        System.out.println(treeModel.toString());
         int lim = rootNode.getChildCount();            
         file file_temp = (file) root_file;
         System.out.printf(file_temp.toString());
@@ -131,8 +162,7 @@ public class DynamicTree extends JPanel {
                 DefaultMutableTreeNode next_node = (DefaultMutableTreeNode) node.getChildAt(i);                
                 print_aux(next_node);                                
             }
-        }
-        
+        }        
     }
     
     /** Remove the currently selected node. */

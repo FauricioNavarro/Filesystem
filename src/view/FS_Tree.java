@@ -81,9 +81,13 @@ public class FS_Tree extends JPanel
             //Add button clicked                                           
             String name_aux = JOptionPane.showInputDialog("Digite el nombre del directorio.");
             Date create_date = new Date();
-            file new_root = new file(name_aux,"dir","",create_date,create_date,0);            
+            file new_root = new file(name_aux,"dir","",create_date,create_date,0); 
+            
+            controller.getInstance().add_disco(new_root);
+            controller.getInstance().print_disco();
             treePanel.mkdir(new_root);   
-            treePanel.printTree();
+            //treePanel.printTree();
+            System.out.println(treePanel.tree_toString());
         }else if (FLE_COMMAND.equals(command)) {
             //Remove button clicked            
             String name_aux = JOptionPane.showInputDialog("Digite el nombre del archivo.");
@@ -92,7 +96,8 @@ public class FS_Tree extends JPanel
             Date create_date = new Date();
             file new_root = new file(name_aux,type,content,create_date,create_date,0);                                  
             treePanel.mkdir(new_root);
-            treePanel.printTree();
+            //treePanel.printTree();
+            System.out.println(treePanel.tree_toString());
         } else if (REMOVE_COMMAND.equals(command)) {
             //Remove button clicked
             treePanel.removeCurrentNode();

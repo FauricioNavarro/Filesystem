@@ -82,6 +82,9 @@ public class file {
         this.content = conten;
     }
 
+    public String get_all(){
+        return name + type + create_date + update + content + '|';
+    }
     @Override
     public String toString() {
         return "Name= " + name + ",Extension= " + type + ",create_date= " + create_date + '\n' +"Content= "+content + '\n';
