@@ -6,6 +6,9 @@
 package model;
 
 import java.util.Date;
+import javax.swing.event.TreeModelListener;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
 
 /**
  *
@@ -90,6 +93,9 @@ public class file {
         return "Name= " + name + ",Extension= " + type + ",create_date= " + create_date + '\n' +"Content= "+content + '\n';
     }
 
+    public String getFullName() {
+        return this.name + this.type;
+    }
     
     
     
