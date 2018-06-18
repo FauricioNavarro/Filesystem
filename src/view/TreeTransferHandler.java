@@ -10,6 +10,7 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.tree.*;
 import model.file;
+import view.DynamicTree;
 
 class TreeTransferHandler extends TransferHandler {
 
@@ -202,7 +203,7 @@ class TreeTransferHandler extends TransferHandler {
         file target_file = (file) parent.getUserObject();
         DefaultMutableTreeNode tmp_node =
                 (DefaultMutableTreeNode) nodes[0].getUserObject();
-        file mov_file = (file) tmp_node.getUserObject();//aqui lo que estoy moviedo
+        file mov_file = (file) tmp_node.getUserObject();//aqui lo que estoy moviedo                
         
         if (target_file.getFullName().equals(mov_file.getFullName())) {
             if (!target_file.getType().equals("root")) {

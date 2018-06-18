@@ -207,7 +207,7 @@ public class FS_Tree extends JPanel
             //Clear button clicked.
             treePanel.clear();
         } else if (CRT_COMMAND.equals(command)) {
-            String name_temp = JOptionPane.showInputDialog("Nombre del directoria raiz.");
+            String name_temp = JOptionPane.showInputDialog("Nombre del directoria raíz.");
             String num_sect = JOptionPane.showInputDialog("Cantidad de sectores");
             String tam_sect = JOptionPane.showInputDialog("Tamaño del sector");
             controller.getInstance().file_system(name_temp, num_sect, tam_sect);
@@ -223,6 +223,22 @@ public class FS_Tree extends JPanel
         } else if (VIEW_COMMAND.equals(command)) {
             String file_content = treePanel.getCurrentFileContent();
             jlTitle.setText(file_content);
+        } else if (FIND_COMMAND.equals(command)){
+            String input = JOptionPane.showInputDialog("Nombre y extensión del archivo:");
+                
+            // to do: Reescribir para contemplar caso hola.mundo.txt
+            String[] splitted_input = input.split("\\.");
+            String aux = "";
+            if (splitted_input.length == 2) {
+                String file_name = splitted_input[0];
+                String file_extension = splitted_input[1];                
+                aux = treePanel.findTree(file_name, file_extension);
+            }else{
+                String file_name = splitted_input[0];
+                aux = treePanel.findTree(file_name, "");
+            }
+            System.out.println(aux);
+            JOptionPane.showMessageDialog(this, "+++++++ Rutas +++++++"+'\n'+aux);
         }
     }
 

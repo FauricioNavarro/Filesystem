@@ -204,6 +204,53 @@ public class DynamicTree extends JPanel {
         }        
     }
     
+    public String findTree(String nombre,String ext){        
+        int lim = rootNode.getChildCount();            
+        file file_temp = (file) root_file;
+        System.out.printf(file_temp.toString());
+        String result = "";
+        if(ext.equals("")){
+            if(file_temp.getName().equals(nombre)){
+                result = result + (create_path(rootNode)+'\n');
+            }
+        }else{
+            if(file_temp.getName().equals(nombre)&&file_temp.getType().equals(ext)){
+                result = result + (create_path(rootNode)+'\n');
+            }
+        }
+        for(int i = 0;i<lim;i++){
+            DefaultMutableTreeNode next_node = (DefaultMutableTreeNode) rootNode.getChildAt(i);
+            if(next_node != null){
+                result = result + find_aux(next_node,nombre,ext);
+            }
+        }     
+        return result;
+    }
+    
+    public String find_aux(DefaultMutableTreeNode node,String nombre,String ext){
+        String result = "";
+        if(node != null){
+            int lim = node.getChildCount();
+            Object obj = node.getUserObject();
+            file file_temp = (file) obj;
+            System.out.println(file_temp.toString());
+            if(ext.equals("")){
+                if(file_temp.getName().equals(nombre)){
+                    result = result + (create_path(node)+'\n');
+                }
+            }else{
+                if(file_temp.getName().equals(nombre)&&file_temp.getType().equals(ext)){
+                    result = result + (create_path(node)+'\n');
+                }
+            }
+            for(int i = 0;i<lim;i++){
+                DefaultMutableTreeNode next_node = (DefaultMutableTreeNode) node.getChildAt(i);                
+                result = result + find_aux(next_node,nombre,ext);                                
+            }
+        }        
+        return result;
+    }
+    
     /** Remove the currently selected node. */
     public void removeCurrentNode() {
         TreePath currentSelection = tree.getSelectionPath();
