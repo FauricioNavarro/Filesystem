@@ -114,7 +114,6 @@ public class FS_Tree extends JPanel
             //treePanel.printTree();
             System.out.println(treePanel.tree_toString());
         }else if (FLE_COMMAND.equals(command)) {
-            treePanel.mkdir(new_root);
             // Remove button clicked
 
             if (treePanel.dirSelected()) {
@@ -155,11 +154,11 @@ public class FS_Tree extends JPanel
             } else
                 JOptionPane.showMessageDialog(
                     this,
-                );
-        } else if (REM_COMMAND.equals(command)) {
-                    JOptionPane.ERROR_MESSAGE
-                    "Error",
                     "Solo se pueden crear archivos en un directorio.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+                );
+        } else if (REM_COMMAND.equals(command)) {                    
             //Remove button clicked
             treePanel.removeCurrentNode();
         } else if (CLEAR_COMMAND.equals(command)) {
