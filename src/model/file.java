@@ -86,11 +86,12 @@ public class file {
     }
 
     public String get_all(){
-        return name + type + create_date + update + content + '|';
+        return name + type + create_date + update + content;
     }
     @Override
     public String toString() {
-        return "Name= " + name + ",Extension= " + type + ",create_date= " + create_date + '\n' +"Content= "+content + '\n';
+        return "Nombre= " + name + ",Extensión= " + type + ",create_date= " + create_date +",tamaño:"+ 
+                (get_all().length()-1) +'\n' +"Content= "+content + '\n';
     }
 
     public String getFullName() {

@@ -37,6 +37,7 @@ public class FS_Tree extends JPanel
     private static String COPY_COMMAND = "COPY";
     private static String MOV_COMMAND = "MOV";
     private static String REM_COMMAND = "REM";
+    private static String FIND_COMMAND = "FIND";
     private static String CLEAR_COMMAND = "clear";
     private static String NAME = "name";
 
@@ -60,7 +61,7 @@ public class FS_Tree extends JPanel
         fileButton.setActionCommand(FLE_COMMAND);
         fileButton.addActionListener(this);
 
-        JButton removeButton = new JButton("Remove");
+        JButton removeButton = new JButton("REM");
         removeButton.setActionCommand(REM_COMMAND);
         removeButton.addActionListener(this);
 
@@ -75,6 +76,10 @@ public class FS_Tree extends JPanel
         JButton viewButton = new JButton("VIEW");
         viewButton.setActionCommand(VIEW_COMMAND);
         viewButton.addActionListener(this);
+        
+        JButton findButton = new JButton("FIND");
+        findButton.setActionCommand(FIND_COMMAND);
+        findButton.addActionListener(this);
 
         //Lay everything out.
         treePanel.setPreferredSize(new Dimension(500, 350));
@@ -84,13 +89,14 @@ public class FS_Tree extends JPanel
         panel.add(crtButton);
         panel.add(addButton);
         panel.add(fileButton);
-        panel.add(removeButton);
-        panel.add(clearButton);
+        panel.add(removeButton);        
         panel.add(modButton);
         panel.add(viewButton);
+        panel.add(findButton);
+        panel.add(clearButton);
         add(panel, BorderLayout.WEST);
 
-        JPanel panel2 = new JPanel(new GridLayout(7, 0));
+        JPanel panel2 = new JPanel(new GridLayout(8, 0));
         JLabel jlVisor = new JLabel("    Contenido del archivo seleccionado:    ");
         jlTitle = new JLabel();
         panel2.add(jlVisor);
@@ -107,12 +113,32 @@ public class FS_Tree extends JPanel
             String name_aux = JOptionPane.showInputDialog("Digite el nombre del directorio.");
             Date create_date = new Date();
             file new_root = new file(name_aux,"dir","",create_date,create_date,0); 
-            
-            controller.getInstance().add_disco(new_root);
-            controller.getInstance().print_disco();
-            treePanel.mkdir(new_root);   
-            //treePanel.printTree();
-            System.out.println(treePanel.tree_toString());
+            if(name_aux.equals("")){
+                JOptionPane.showMessageDialog(
+                                this,
+                                "Espacio en blanco.",
+                                "¡Error!",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+            }else{
+                boolean band = controller.getInstance().add_disco(new_root);
+                if(band){                    
+                    DefaultMutableTreeNode parentNode = treePanel.mkdir(new_root);  
+                    String Mypath = treePanel.create_path(parentNode);
+                    System.out.println(Mypath);
+                    controller.getInstance().actualizar_path(name_aux, Mypath);                                        
+                    controller.getInstance().print_disco();
+                    controller.getInstance().reescribir_disco();
+                }else{
+                    JOptionPane.showMessageDialog(
+                                this,
+                                "No hay espacio en el File system",
+                                "¡Error!",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                }
+                
+            }            
         }else if (FLE_COMMAND.equals(command)) {
             // Remove button clicked
 
@@ -124,8 +150,8 @@ public class FS_Tree extends JPanel
                 if (splitted_input.length == 2) {
                     String file_name = splitted_input[0];
                     String file_extension = splitted_input[1];
-
-                    file new_root = new file(file_name, file_extension, "");
+                    Date create_date = new Date();
+                    file new_root = new file(file_name, file_extension, "",create_date,create_date,0);
                     if (treePanel.existsFile(new_root)) {
                         JOptionPane.showMessageDialog(
                                 this,
@@ -139,8 +165,23 @@ public class FS_Tree extends JPanel
                             file_content = "";
                         }
                         
-                        new_root.setConten(file_content);
-                        treePanel.mkdir(new_root);
+                        new_root.setConten(file_content);                        
+                        boolean band = controller.getInstance().add_disco(new_root);
+                        if(band){                    
+                            DefaultMutableTreeNode parentNode = treePanel.mkdir(new_root);
+                            String Mypath = treePanel.create_path(parentNode);
+                            System.out.println(Mypath);
+                            controller.getInstance().actualizar_path(file_name, Mypath);                                        
+                            controller.getInstance().print_disco();
+                            controller.getInstance().reescribir_disco();
+                        }else{
+                            JOptionPane.showMessageDialog(
+                                        this,
+                                        "No hay espacio en el File system",
+                                        "¡Error!",
+                                        JOptionPane.ERROR_MESSAGE
+                                );
+                        }
                     }
 
                 } else {
@@ -160,7 +201,8 @@ public class FS_Tree extends JPanel
                 );
         } else if (REM_COMMAND.equals(command)) {                    
             //Remove button clicked
-            treePanel.removeCurrentNode();
+            treePanel.removeCurrentNode();                        
+            controller.getInstance().reescribir_disco();
         } else if (CLEAR_COMMAND.equals(command)) {
             //Clear button clicked.
             treePanel.clear();
@@ -170,13 +212,14 @@ public class FS_Tree extends JPanel
             String tam_sect = JOptionPane.showInputDialog("Tamaño del sector");
             controller.getInstance().file_system(name_temp, num_sect, tam_sect);
             treePanel.create(name_temp);
+            controller.getInstance().reescribir_disco();
         } else if (MFLE_COMMAND.equals(command)) {
             String file_content = JOptionPane.showInputDialog(new JTextArea(), "Nuevo contenido del archivo:");
             if (file_content == null) {
                 file_content = "";
             }
-
             treePanel.modifyCurrentFileNode(file_content);
+            controller.getInstance().print_disco();
         } else if (VIEW_COMMAND.equals(command)) {
             String file_content = treePanel.getCurrentFileContent();
             jlTitle.setText(file_content);

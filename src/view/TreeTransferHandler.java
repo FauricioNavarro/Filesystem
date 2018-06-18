@@ -189,7 +189,7 @@ class TreeTransferHandler extends TransferHandler {
         JTree.DropLocation dl
                 = (JTree.DropLocation) support.getDropLocation();
         int childIndex = dl.getChildIndex();
-        TreePath dest = dl.getPath();
+        TreePath dest = dl.getPath(); //aqui el path del padre
         DefaultMutableTreeNode parent
                 = (DefaultMutableTreeNode) dest.getLastPathComponent();
         JTree tree = (JTree) support.getComponent();
@@ -202,7 +202,7 @@ class TreeTransferHandler extends TransferHandler {
         file target_file = (file) parent.getUserObject();
         DefaultMutableTreeNode tmp_node =
                 (DefaultMutableTreeNode) nodes[0].getUserObject();
-        file mov_file = (file) tmp_node.getUserObject();
+        file mov_file = (file) tmp_node.getUserObject();//aqui lo que estoy moviedo
         
         if (target_file.getFullName().equals(mov_file.getFullName())) {
             if (!target_file.getType().equals("root")) {

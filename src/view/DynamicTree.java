@@ -4,10 +4,13 @@ package view;
  * This code is based on an example provided by Richard Stanford, 
  * a tutorial reader.
  */
+import controller.controller;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import javax.swing.DropMode;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -18,6 +21,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
+import javax.swing.tree.TreeNode;
 import model.file;
 
 public class DynamicTree extends JPanel {
@@ -56,10 +60,34 @@ public class DynamicTree extends JPanel {
         rootNode.removeAllChildren();
         treeModel.reload();
     }
+    
+    public String create_path(DefaultMutableTreeNode parentNode){                
+        TreeNode[] path_list_aux = new TreeNode[WIDTH];        
+        path_list_aux = parentNode.getPath();
+        String path="";
+        for(TreeNode d:path_list_aux){
+            DefaultMutableTreeNode n = (DefaultMutableTreeNode) d;
+            Object obj = n.getUserObject();
+            file f = (file) obj;
+            path = path + (f.getName() +"/");            
+        }
+        return path;        
+    }
 
     public void create(String name) {
         root_file = new file(name, "root", "");
-        rootNode.setUserObject(root_file);
+        boolean band = controller.getInstance().add_disco(root_file);
+        if(band){
+            controller.getInstance().print_disco();
+            rootNode.setUserObject(root_file);                    
+        }else{
+            JOptionPane.showMessageDialog(
+                        this,
+                        "No hay espacio en el File system",
+                        "¡Error!",
+                        JOptionPane.ERROR_MESSAGE
+                );
+        }        
     }
 
     public DefaultMutableTreeNode mkdir(Object child) {
@@ -77,8 +105,15 @@ public class DynamicTree extends JPanel {
             user = parentNode.getUserObject();                                                
             file_aux = (file) user;            
             if((file_aux.getType().equals("dir")||file_aux.getType().equals("root"))
-                    && isNameRepit(parentNode, new_file.getName(),new_file.getType())==false){
+                    && isNameRepit(parentNode, new_file.getName(),new_file.getType())==false){                                
                 return addObject(parentNode, child, true);
+            }else{
+                JOptionPane.showMessageDialog(
+                                this,
+                                "No pueden haber 2 directorios con el mismo nombre.",
+                                "¡Error!",
+                                JOptionPane.ERROR_MESSAGE
+                        );
             }
         } else {
             if (parentPath == null) {
@@ -89,7 +124,7 @@ public class DynamicTree extends JPanel {
             user = parentNode.getUserObject();                                                
             file_aux = (file) user;  
             if((file_aux.getType().equals("dir")||file_aux.getType().equals("root"))
-                    && isNameRepit(parentNode, new_file.getName(),new_file.getType())==false){
+                    && isNameRepit(parentNode, new_file.getName(),new_file.getType())==false){                                
                 return addObject(parentNode, child, true);
             }
         }
@@ -176,7 +211,10 @@ public class DynamicTree extends JPanel {
             DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) (currentSelection.getLastPathComponent());
             MutableTreeNode parent = (MutableTreeNode) (currentNode.getParent());
             if (parent != null) {
-                treeModel.removeNodeFromParent(currentNode);
+                String path_aux = create_path(currentNode);
+                System.out.println("Current delete node:"+path_aux);
+                controller.getInstance().remove_disco(path_aux);
+                treeModel.removeNodeFromParent(currentNode);                
                 return;
             }
         }
@@ -194,8 +232,10 @@ public class DynamicTree extends JPanel {
             DefaultMutableTreeNode currentNode =
                     (DefaultMutableTreeNode) (currentSelection.getLastPathComponent());
 
-            file archivo = (file) currentNode.getUserObject();
+            file archivo = (file) currentNode.getUserObject();                        
             archivo.setConten(new_file_content);
+            controller.getInstance().actualizar_contenido(archivo, create_path(currentNode));
+            controller.getInstance().reescribir_disco();
         }
 
         // Either there was no selection, or the root was selected.
