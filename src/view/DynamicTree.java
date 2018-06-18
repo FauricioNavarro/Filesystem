@@ -28,7 +28,7 @@ public class DynamicTree extends JPanel {
     private Toolkit toolkit = Toolkit.getDefaultToolkit();
     private file root_file;
 
-    public DynamicTree() {
+    public DynamicTree(FS_Tree fsTre) {
         super(new GridLayout(1, 0));
         root_file = new file("root", "root", "");
         rootNode = new DefaultMutableTreeNode(root_file);
@@ -39,7 +39,7 @@ public class DynamicTree extends JPanel {
         
         tree.setDragEnabled(true);
         tree.setDropMode(DropMode.ON_OR_INSERT);
-        tree.setTransferHandler(new TreeTransferHandler());
+        tree.setTransferHandler(new TreeTransferHandler(fsTre));
         
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.CONTIGUOUS_TREE_SELECTION);
         tree.setShowsRootHandles(true);
@@ -117,7 +117,8 @@ public class DynamicTree extends JPanel {
     public void modifyCurrentFileNode(String new_file_content) {
         TreePath currentSelection = tree.getSelectionPath();
         if (currentSelection != null) {
-            DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) (currentSelection.getLastPathComponent());
+            DefaultMutableTreeNode currentNode =
+                    (DefaultMutableTreeNode) (currentSelection.getLastPathComponent());
 
             file archivo = (file) currentNode.getUserObject();
             archivo.setConten(new_file_content);

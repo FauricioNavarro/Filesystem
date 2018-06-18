@@ -45,7 +45,7 @@ public class FS_Tree extends JPanel
         super(new BorderLayout());
 
         //Create the components.        
-        treePanel = new DynamicTree();
+        treePanel = new DynamicTree(this);
 
         JButton crtButton = new JButton("CRT");
         crtButton.setActionCommand(CRT_COMMAND);
