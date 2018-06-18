@@ -92,6 +92,14 @@ public class controller {
         }
     }
     
+    public void modificar_path(String last_path,String my_path){
+        for(sector s:disco_virtual){
+            if(s.getRuta().equals(last_path)){
+                s.setRuta(my_path);
+            }
+        }
+    }
+    
     public boolean actualizar_contenido(file new_file,String my_path){
         int linea = new_file.get_all().length();
         System.out.println("largo:"+linea);

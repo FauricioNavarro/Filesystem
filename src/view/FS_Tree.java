@@ -239,6 +239,7 @@ public class FS_Tree extends JPanel
             }
             System.out.println(aux);
             JOptionPane.showMessageDialog(this, "+++++++ Rutas +++++++"+'\n'+aux);
+            controller.getInstance().print_disco();
         }
     }
 

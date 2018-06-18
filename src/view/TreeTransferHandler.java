@@ -11,6 +11,7 @@ import javax.swing.*;
 import javax.swing.tree.*;
 import model.file;
 import view.DynamicTree;
+import controller.controller;
 
 class TreeTransferHandler extends TransferHandler {
 
@@ -203,8 +204,15 @@ class TreeTransferHandler extends TransferHandler {
         file target_file = (file) parent.getUserObject();
         DefaultMutableTreeNode tmp_node =
                 (DefaultMutableTreeNode) nodes[0].getUserObject();
-        file mov_file = (file) tmp_node.getUserObject();//aqui lo que estoy moviedo                
-        
+        file mov_file = (file) tmp_node.getUserObject();//aqui lo que estoy moviedo
+        /*
+        DynamicTree temporal = new DynamicTree(fsTree);
+        System.out.println("antes de mov:"+temporal.create_path(tmp_node));
+        System.out.println("X moverse:"+temporal.create_path(parent));
+        String last = temporal.create_path(tmp_node);
+        String actual = temporal.create_path(parent);
+        controller.getInstance().modificar_path(last, actual);
+        */
         if (target_file.getFullName().equals(mov_file.getFullName())) {
             if (!target_file.getType().equals("root")) {
                 String new_name = JOptionPane.showInputDialog("Nuevo nombre:");
